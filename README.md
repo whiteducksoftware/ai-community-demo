@@ -1,6 +1,6 @@
 # Demo for Agents with Flock:
 
-<img src="./architecture.drawio.png" alt="Architecture of the Application" width="300" height="200">
+<img src="./architecture.drawio.png" alt="Architecture of the Application">
 
 ## Dependencies:
 
