@@ -1,6 +1,5 @@
 """GitHub MCP Server."""
 
-import os
 from flock.core import FlockFactory
 
 from settings import APP_SETTINGS
