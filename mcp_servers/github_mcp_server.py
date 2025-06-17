@@ -21,4 +21,6 @@ github_mcp_server = FlockFactory.create_mcp_server(
         ],
     ),
     enable_tools_feature=True,
+    tool_cache_ttl=3,
+    tool_result_cache_ttl=3,
 )

@@ -4,6 +4,7 @@ import uuid
 from agents.github_agent import github_agent
 from agents.rag_agent import rag_agent
 from mcp_servers.github_mcp_server import github_mcp_server
+from routers.limit_router import LimitRouter, LimitRouterConfig
 from settings import APP_SETTINGS
 from utils.upload_file_function import upload_files
 from flock.core import Flock
@@ -44,9 +45,18 @@ async def run_agents(task: str) -> None:
             enabled=True, with_output=True, confidence_threshold=0.75,
         )
     )
+    
+    limit_router = LimitRouter(
+        name="limit_router",
+        config=LimitRouterConfig(
+            enabled=True,
+            max_iterations=10,
+            orchestrator=agent_router,
+        )
+    )
 
-    rag_agent.handoff_router = agent_router
-    github_agent.handoff_router = agent_router
+    rag_agent.handoff_router = limit_router
+    github_agent.handoff_router = limit_router
 
     flock = Flock(
         name="demo_swarm",
