@@ -1,12 +1,11 @@
 import asyncio
 import os
-import uuid
-from agents.github_agent import github_agent
 from agents.rag_agent import rag_agent
+from agents.github_agent import github_agent
 from mcp_servers.github_mcp_server import github_mcp_server
 from routers.limit_router import LimitRouter, LimitRouterConfig
 from settings import APP_SETTINGS
-from utils.upload_file_function import upload_files
+from utils.upload_file_function import delete_files, upload_files
 from flock.core import Flock
 from flock.routers.agent.agent_router import AgentRouter, AgentRouterConfig
 from flock.core.logging.logging import configure_logging
@@ -15,12 +14,12 @@ from flock.core.logging.logging import configure_logging
 async def upload(
     paths: list[str],
     index: str,
-) -> None:
+) -> list[str]:
     """Upload the files to the memory."""
-    await upload_files(document_id=str(uuid.uuid4()), index=index, files=paths)
+    return await upload_files(files=paths)
 
 
-async def saturate() -> None:
+async def saturate() -> list[str]:
     cwd = os.getcwd()
     folder = "/files_for_memory"
 
@@ -32,11 +31,16 @@ async def saturate() -> None:
         f"{cwd}{folder}/roadmap.md",
     ]
 
-    await upload(
+    return await upload(
         paths=files_to_upload,
         index="default",
     )
 
+async def to_declarative_yaml(flock: Flock):
+    flock.to_yaml_file(
+        path="./example.yaml",
+        path_type="relative",
+    )
 
 async def run_agents(task: str) -> None:
     agent_router = AgentRouter(
@@ -70,6 +74,8 @@ async def run_agents(task: str) -> None:
             github_mcp_server,
         ],
     )
+    
+    await to_declarative_yaml(flock=flock)
 
     configure_logging(flock_level="ERROR", external_level="ERROR")
 
@@ -84,10 +90,16 @@ async def run_agents(task: str) -> None:
         print(result["action_report"])
     else:
         print("faulty code.")
+        
+
+async def clear_memory(file_ids: list[str]) -> None:
+    """Remove the uploaded files after the demo."""
+    await delete_files(file_ids=file_ids)
 
 
 async def main():
-    await saturate()
+    document_ids = await saturate()
+    # await clear_memory(document_ids)
     task = input("Please provide a task: ")
     await run_agents(task=task)
 

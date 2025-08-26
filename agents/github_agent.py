@@ -26,6 +26,7 @@ github_agent = FlockFactory.create_default_agent(
     servers=[github_mcp_server],
     model=APP_SETTINGS.default_model,
     include_reasoning=True,
+    temperature=1.0,
     stream=True,
     max_tokens=8192,
     max_tool_calls=1000,

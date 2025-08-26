@@ -2,7 +2,7 @@
 
 from flock.core import FlockFactory
 
-from local_tools.memory_tools import ask_knowledge_base, check_knowledge_base_health, get_indexes, search_knowledge_base
+from local_tools.memory_tools import check_knowledge_base_health, search_knowledge_base
 from settings import APP_SETTINGS
 
 AGENT_NAME="project_manager_agent"
@@ -27,8 +27,6 @@ AGENT_OUTPUT="""tasks: list[dict[str, Any]] | A list of individual tasks that de
 
 
 TOOLS = [
-    ask_knowledge_base,
-    get_indexes,
     search_knowledge_base,
     check_knowledge_base_health,
 ]
@@ -43,9 +41,9 @@ rag_agent = FlockFactory.create_default_agent(
     stream=True,
     enable_rich_tables=True,
     model=APP_SETTINGS.default_model,
+    temperature=1.0,
     max_tokens=8192,
     max_tool_calls=1000,
-    temperature=1.0,
     print_context=True,
     tools=TOOLS,
 )

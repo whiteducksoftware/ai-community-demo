@@ -64,6 +64,11 @@ class AppSettings(BaseSettings):
         description="Timeout before undelivered messages are being sent to the db."
     )
     
+    memory_upload_url: str = Field(
+        validation_alias="MEMORY_UPLOAD_URL",
+        description="URL for the RAG-API"
+    )
+    
     model_config: SettingsConfigDict = SettingsConfigDict(
         env_file=str(Path(__file__).parent / ".env"),
         env_file_encoding="utf-8",
